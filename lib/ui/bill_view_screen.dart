@@ -65,6 +65,17 @@ class _BillViewScreenState extends State<BillViewScreen> {
       ),
       body: Column(
         children: [
+          if (widget.provider.webViewHint != null)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 10),
+              color: BillTheme.navy,
+              child: Text(
+                widget.provider.webViewHint!,
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+              ),
+            ),
           if (s != null && s.hasAny)
             Container(
               width: double.infinity,

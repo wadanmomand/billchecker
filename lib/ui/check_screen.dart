@@ -150,9 +150,10 @@ class _CheckScreenState extends State<CheckScreen> {
                     color: BillTheme.navy)),
             const SizedBox(height: 4),
             Text(
-              p.mode == FetchMode.webViewOnly
-                  ? 'Opens the official ${p.shortName} page — solve the captcha there if asked.'
-                  : 'Fetches your latest bill from the official ${p.shortName} portal.',
+              p.webViewHint ??
+                  (p.mode == FetchMode.webViewOnly
+                      ? 'Opens the official ${p.shortName} page — solve the captcha there if asked.'
+                      : 'Fetches your latest bill from the official ${p.shortName} portal.'),
               style: const TextStyle(color: Colors.black54, fontSize: 13),
             ),
             const SizedBox(height: 20),

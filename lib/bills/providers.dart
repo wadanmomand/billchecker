@@ -22,9 +22,14 @@ class BillProvider {
   final BillKind kind;
   final FetchMode mode;
 
-  /// Builds the deep link for [reference]. Return null if the provider
-  /// needs the user to type the number on the page itself.
+  /// Builds the deep link for [reference]. For providers whose portal has
+  /// no working deep link, this returns the official page itself and the
+  /// user types the number there (see [webViewHint]).
   final String Function(String reference) urlBuilder;
+
+  /// Hint shown when the number must be typed on the portal page itself
+  /// (null = the number is carried in the deep link).
+  final String? webViewHint;
 
   /// Label shown above the input field, e.g. "14-digit Reference Number".
   final String inputLabel;
@@ -39,6 +44,7 @@ class BillProvider {
     required this.kind,
     required this.mode,
     required this.urlBuilder,
+    this.webViewHint,
     required this.inputLabel,
     required this.inputLengths,
   });
@@ -49,10 +55,13 @@ String _pitc(String prefix) =>
 
 /// All 12 launch providers. Order: electricity DISCOs, KE, then gas.
 ///
-/// NOTE: KE/SNGPL/SSGC deep-link formats are best-effort (not live-verified
-/// from our network — portals are Pakistan-geo-restricted). The WebView
-/// fallback means a wrong deep link still lands the user on the right
-/// portal page to type the number manually.
+/// NOTE (2026-10-22, phone-verified): KE and SNGPL have NO working deep
+/// link. KE's old /bill/check-bill?account= path times out on a real phone;
+/// the live official page is ke.com.pk/bills-e-payments (verified 2026-10-22).
+/// SNGPL's guessed /web/customer-services/view-bill path 404s; its bill form
+/// ("Get Your Gas Bill" → Consumer Bill + captcha) is only reachable through
+/// the site's menu, so the WebView opens sngpl.com.pk itself. Both providers
+/// carry a [BillProvider.webViewHint] telling the user what to type where.
 final List<BillProvider> kProviders = [
   BillProvider(
     id: 'lesco',
@@ -151,6 +160,8 @@ final List<BillProvider> kProviders = [
     kind: BillKind.electricity,
     mode: FetchMode.webViewOnly, // separate system; CAPTCHA unconfirmed
     urlBuilder: _keUrl,
+    webViewHint:
+        'On the KE page, enter your 13-digit account number to view the bill.',
     inputLabel: 'Account Number (13 digits)',
     inputLengths: [13],
   ),
@@ -161,6 +172,8 @@ final List<BillProvider> kProviders = [
     kind: BillKind.gas,
     mode: FetchMode.webViewOnly, // image CAPTCHA per 3 sources
     urlBuilder: _sngplUrl,
+    webViewHint:
+        "On the SNGPL site, open 'Get Your Gas Bill' → Consumer Bill, then enter your consumer number and the captcha.",
     inputLabel: 'Consumer Number (11 digits)',
     inputLengths: [11],
   ),
@@ -179,11 +192,15 @@ final List<BillProvider> kProviders = [
 String Function(String) _pitcRef(String prefix) =>
     (ref) => '${_pitc(prefix)}$ref';
 
-String _keUrl(String account) =>
-    'https://www.ke.com.pk/bill/check-bill?account=$account';
+/// KE has no working deep link (the old /bill/check-bill?account= path
+/// times out on a real phone, 2026-10-22). Open the live official
+/// Digital Bills & Payments page; the user enters the number there.
+String _keUrl(String account) => 'https://ke.com.pk/bills-e-payments/';
 
-String _sngplUrl(String consumer) =>
-    'https://www.sngpl.com.pk/web/customer-services/view-bill?consumer=$consumer';
+/// SNGPL has no documented deep link (the guessed view-bill path 404s,
+/// 2026-10-22). Open the official site; the user reaches the Consumer
+/// Bill form via 'Get Your Gas Bill' in the site menu.
+String _sngplUrl(String consumer) => 'https://www.sngpl.com.pk/';
 
 String _ssgcUrl(String customer) =>
     'https://viewbill.ssgc.com.pk/web/?customer=$customer';

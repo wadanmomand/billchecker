@@ -1,0 +1,4 @@
+# Upload keystore + credentials — NEVER commit these.
+key.properties
+*.jks
+*.keystore
