@@ -68,11 +68,15 @@ class _AdBannerState extends State<AdBanner> {
     if (ad == null || !_loaded) return const SizedBox.shrink();
     return SafeArea(
       top: false,
-      child: Center(
-        child: SizedBox(
-          width: ad.size.width.toDouble(),
-          height: ad.size.height.toDouble(),
-          child: AdWidget(ad: ad),
+      child: SizedBox(
+        width: double.infinity,
+        height: ad.size.height.toDouble(),
+        child: Center(
+          child: SizedBox(
+            width: ad.size.width.toDouble(),
+            height: ad.size.height.toDouble(),
+            child: AdWidget(ad: ad),
+          ),
         ),
       ),
     );

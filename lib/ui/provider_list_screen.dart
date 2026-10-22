@@ -25,7 +25,7 @@ class ProviderListScreen extends StatelessWidget {
           crossAxisCount: 2,
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
-          childAspectRatio: 1.6,
+          childAspectRatio: 1.35,
         ),
         itemCount: providers.length,
         itemBuilder: (context, i) {
