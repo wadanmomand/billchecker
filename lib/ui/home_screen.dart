@@ -6,6 +6,7 @@ import '../bills/saved.dart';
 import 'check_screen.dart';
 import 'provider_list_screen.dart';
 import 'saved_screen.dart';
+import 'sources_dialog.dart';
 import '../ads/ad_banner.dart';
 import 'theme.dart';
 
@@ -45,6 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('MY BILL CHECKER'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'Sources & Disclaimer',
+            onPressed: () => showBillCheckerSourcesDialog(context),
+          ),
           IconButton(
             icon: const Icon(Icons.bookmark),
             tooltip: 'Saved bills',
